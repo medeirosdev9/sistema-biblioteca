@@ -7,7 +7,9 @@ import net.weg.sistemabiblioteca.repository.LivroRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +23,21 @@ public class LivroService {
         return livro.toDto();
     }
 
-    public List<LivroResponseDTO> livrosResponse() {
+    public Livro update(Livro livro, Integer id) {
+        livro.setId(id);
+        return repository.save(livro);
+    }
+
+    public void delete (Integer id) {
+        repository.deleteById(id);
+    }
+
+    public LivroResponseDTO findById(Integer id) {
+        Livro livro = repository.findById(id).orElseThrow(NoSuchElementException::new);
+        return livro.toDto();
+    }
+
+    public List<LivroResponseDTO> findAll() {
         return repository.findAll().stream().map(Livro::toDto).collect(Collectors.toList());
     }
 
