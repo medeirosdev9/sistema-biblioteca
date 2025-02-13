@@ -1,29 +1,28 @@
 package net.weg.sistemabiblioteca.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
+@Builder
 @Entity
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
     private Integer id;
 
-    @NonNull
     @Column(nullable = false)
     private String nome;
 
-    @NonNull
     @Column(nullable = false)
-    private String login;
+    private String senha;
 
-    @NonNull
+    @Column(nullable = false)
+    private String cpf;
+
     @Column(nullable = false)
     private String cargo;
 }
