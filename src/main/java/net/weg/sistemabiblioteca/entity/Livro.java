@@ -9,6 +9,7 @@ import net.weg.sistemabiblioteca.controller.dto.response.LivroResponseDTO;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "livros")
 public class Livro {
 
     @Id

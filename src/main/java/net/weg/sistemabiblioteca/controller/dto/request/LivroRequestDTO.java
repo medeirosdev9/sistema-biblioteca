@@ -7,11 +7,10 @@ import net.weg.sistemabiblioteca.entity.Autor;
 import net.weg.sistemabiblioteca.entity.Emprestimo;
 import net.weg.sistemabiblioteca.entity.Livro;
 
-@Data
 public record LivroRequestDTO(
 
         @NotBlank String titulo,
-        @NotBlank Integer quantidade,
+        @NotNull Integer quantidade,
 
         @NotBlank String sinopse,
 

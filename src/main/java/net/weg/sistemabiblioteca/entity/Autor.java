@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 import net.weg.sistemabiblioteca.controller.dto.response.AutorResponseDTO;
 
 import java.util.List;
+
 @Builder
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "autores")
 public class Autor {
 
     @Id
@@ -22,7 +24,7 @@ public class Autor {
     @Column(nullable = false)
     private String nome;
 
-    @OneToMany(mappedBy = "livros")
+    @OneToMany(cascade = CascadeType.PERSIST)
     public List<Livro> livros;
 
     public AutorResponseDTO toDto() {

@@ -1,17 +1,17 @@
 package net.weg.sistemabiblioteca.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import net.weg.sistemabiblioteca.controller.dto.response.EmprestimoResponseDTO;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "emprestimos")
 public class Emprestimo {
 
     @Id
@@ -31,4 +31,8 @@ public class Emprestimo {
 
     @Column(nullable = false)
     private LocalDate dataDevolucao;
+
+    public EmprestimoResponseDTO toDto() {
+        return new EmprestimoResponseDTO(id, usuario, livro, dataEmprestimo, dataDevolucao);
+    }
 }

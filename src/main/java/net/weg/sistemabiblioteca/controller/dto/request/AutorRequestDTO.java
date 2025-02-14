@@ -8,7 +8,7 @@ public record AutorRequestDTO(
         @NotBlank String nome
 ) {
 
-    public Autor toEntity() {
+    public Autor toEntity(){
         return Autor.builder()
                 .nome(this.nome)
                 .build();
