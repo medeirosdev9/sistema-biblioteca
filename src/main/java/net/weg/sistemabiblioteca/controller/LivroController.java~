@@ -1,0 +1,87 @@
+package net.weg.sistemabiblioteca.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import net.weg.sistemabiblioteca.controller.dto.request.LivroRequestDTO;
+import net.weg.sistemabiblioteca.controller.dto.response.LivroResponseDTO;
+import net.weg.sistemabiblioteca.entity.Livro;
+import net.weg.sistemabiblioteca.service.LivroService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/livro")
+@AllArgsConstructor
+@Tag(name = "Livro", description = "Operações relacionadas ao Livro")
+public class LivroController {
+
+    private final LivroService service;
+
+    @PostMapping
+    @Operation(summary = "Criar Livro", description = "Cria um novo Livro e retorna seu JSON com status da requisição.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Livro criado com sucesso."),
+            @ApiResponse(responseCode = "422", description = "Falha na validação dos dados."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<LivroResponseDTO> create(@RequestBody @Valid LivroRequestDTO livroDto) {
+        try {
+            return ResponseEntity.ok(service.create(livroDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar Livro", description = "Atualiza um Livro existente pelo ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Livro atualizado."),
+            @ApiResponse(responseCode = "404", description = "Livro não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<Livro> update(@RequestBody Livro livro, @PathVariable Integer id) {
+        return ResponseEntity.ok(service.update(livro, id));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar Livro por ID", description = "Busca um Livro pelo ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Livro encontrado."),
+            @ApiResponse(responseCode = "404", description = "Livro não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<LivroResponseDTO> findById(@PathVariable Integer id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @GetMapping
+    @Operation(summary = "Listar Todos os Livros", description = "Lista todos os Livros cadastrados.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Livros listados."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<List<LivroResponseDTO>> findAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar Livro", description = "Deleta um Livro pelo ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Livro deletado."),
+            @ApiResponse(responseCode = "404", description = "Livro não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
+    }
+}

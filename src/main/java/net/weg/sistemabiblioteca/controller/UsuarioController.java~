@@ -1,0 +1,61 @@
+package net.weg.sistemabiblioteca.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import net.weg.sistemabiblioteca.controller.dto.request.UsuarioRequestDTO;
+import net.weg.sistemabiblioteca.controller.dto.response.UsuarioResponseDTO;
+import net.weg.sistemabiblioteca.service.UsuarioService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/usuario")
+@Tag(name = "Usuario", description = "Operações relacionadas ao Usuario")
+public class UsuarioController {
+    private final UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    @Operation(summary = "Criar Usuario", description = "Cria um novo usuário e retorna os dados cadastrados.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro de validação"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    public ResponseEntity<UsuarioResponseDTO> create(@RequestBody @Validated UsuarioRequestDTO usuarioRequest) {
+        return ResponseEntity.status(201).body(service.create(usuarioRequest));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar Usuario", description = "Atualiza os dados de um usuário existente.")
+    public ResponseEntity<UsuarioResponseDTO> update(@RequestBody UsuarioRequestDTO usuarioRequest, @PathVariable Integer id) {
+        return ResponseEntity.ok(service.update(usuarioRequest, id));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar Usuario por ID", description = "Busca um usuário pelo ID.")
+    public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping
+    @Operation(summary = "Listar Usuarios", description = "Lista todos os usuários cadastrados.")
+    public ResponseEntity<List<UsuarioResponseDTO>> findAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar Usuario", description = "Remove um usuário do sistema pelo ID.")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

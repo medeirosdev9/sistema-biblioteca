@@ -1,46 +1,79 @@
 package net.weg.sistemabiblioteca.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import net.weg.sistemabiblioteca.controller.dto.request.AutorRequestDTO;
-import net.weg.sistemabiblioteca.controller.dto.request.LivroRequestDTO;
 import net.weg.sistemabiblioteca.controller.dto.response.AutorResponseDTO;
-import net.weg.sistemabiblioteca.controller.dto.response.LivroResponseDTO;
 import net.weg.sistemabiblioteca.service.AutorService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/autor")
+@Tag(name = "Autor", description = "Operações relacionadas ao Autor")
+@RequiredArgsConstructor
 public class AutorController {
 
-    private AutorService service;
+    private final AutorService service;
 
     @PostMapping
-    @Tag(name = "Autor", description = "Operações relacionadas ao Autor")
-    @Operation(summary = "Post Autor", description = "Método para postar um Autor, retorna o JSON do Autor + Status da requisição")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Sucesso"),
-            @ApiResponse(responseCode = "422", description = "Falha do Cliente"),
-            @ApiResponse(responseCode = "500", description = "Falha do Server")
+    @Operation(summary = "Criar Autor", description = "Cria um novo Autor e retorna os dados cadastrados.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Autor criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    public ResponseEntity<AutorResponseDTO> create(@RequestBody @Validated AutorRequestDTO autorRequest) {
-        try {
-            return new ResponseEntity<>(service.create(autorRequest), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+    public ResponseEntity<AutorResponseDTO> create(@RequestBody  AutorRequestDTO autorRequest) {
+        return ResponseEntity.status(201).body(service.create(autorRequest));
     }
 
+//    @PutMapping("/{id}")
+//    @Operation(summary = "Atualizar Autor", description = "Atualiza os dados de um Autor existente pelo ID.")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "Autor atualizado com sucesso"),
+//            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+//            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+//            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+//    })
+////    public ResponseEntity<AutorResponseDTO> update(@PathVariable Integer id, @RequestBody AutorRequestDTO autorRequest) {
+////        return ResponseEntity.ok(service.update(autorRequest));
+////    }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar Autor por ID", description = "Obtém os dados de um Autor pelo ID informado.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autor encontrado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    public ResponseEntity<AutorResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping
+    @Operation(summary = "Listar Autores", description = "Retorna uma lista com todos os Autores cadastrados.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    public ResponseEntity<List<AutorResponseDTO>> findAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar Autor", description = "Remove um Autor do sistema pelo ID informado.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Autor deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

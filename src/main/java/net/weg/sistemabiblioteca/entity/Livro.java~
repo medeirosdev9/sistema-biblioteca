@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import net.weg.sistemabiblioteca.controller.dto.response.LivroResponseDTO;
 
+@Builder
 @Entity
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "livros")
@@ -30,6 +30,7 @@ public class Livro {
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     private Autor autor;
+
 
     public LivroResponseDTO toDto() {
         return new LivroResponseDTO(id, titulo, genero, autor.getId());

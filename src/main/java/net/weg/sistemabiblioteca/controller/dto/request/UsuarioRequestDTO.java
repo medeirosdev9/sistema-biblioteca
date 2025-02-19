@@ -1,12 +1,11 @@
 package net.weg.sistemabiblioteca.controller.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import jakarta.validation.constraints.Size;
+
 public record UsuarioRequestDTO(
-
         @NotBlank String nome,
-        @NotBlank String cpf
-) {
-
-
-}
+        @NotBlank @Size(min = 11, max = 11) String cpf,
+        @NotBlank String senha,
+        @NotBlank String cargo
+) {}

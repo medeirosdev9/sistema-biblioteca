@@ -1,0 +1,116 @@
+package net.weg.sistemabiblioteca.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import net.weg.sistemabiblioteca.controller.dto.request.EmprestimoRequestDTO;
+import net.weg.sistemabiblioteca.controller.dto.response.EmprestimoResponseDTO;
+import net.weg.sistemabiblioteca.entity.Emprestimo;
+import net.weg.sistemabiblioteca.service.EmprestimoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/emprestimo")
+public class EmprestimoController {
+    private EmprestimoService service;
+
+    @PostMapping
+    @Tag(name = "Emprestimo", description = "Operações relacionadas ao Emprestimo")
+    @Operation(summary = "Post Emprestimo", description = "Método para postar um Emprestimo, retorna o JSON do Emprestimo + Status da requisição")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sucesso"),
+            @ApiResponse(responseCode = "422", description = "Falha do Cliente"),
+            @ApiResponse(responseCode = "500", description = "Falha do Server")
+    })
+    public ResponseEntity<EmprestimoResponseDTO> create(@RequestBody @Validated EmprestimoRequestDTO emprestimoRequest) {
+        try {
+            return new ResponseEntity<>(service.create(emprestimoRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Atualiza um Emprestimo existente com base no ID informado.
+     *
+     * @param emprestimo Objeto com os novos dados do Emprestimo.
+     * @param id    ID do Emprestimo que será atualizado.
+     * @return JSON do Emprestimo atualizado e status da requisição.
+     */
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar Emprestimo", description = "Método para atualizar um Emprestimo existente com base no ID informado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Emprestimo atualizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Emprestimo não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<Emprestimo> update(@RequestBody Emprestimo emprestimo, @PathVariable Integer id) {
+        Emprestimo emprestimoAtualizado = service.update(emprestimo, id);
+        return new ResponseEntity<>(emprestimoAtualizado, HttpStatus.OK);
+    }
+
+    /**
+     * Busca um Emprestimo pelo seu ID.
+     *
+     * @param id ID do Emprestimo a ser buscado.
+     * @return JSON do Emprestimo encontrado e status da requisição.
+     */
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar Emprestimo por ID", description = "Método para buscar um Emprestimo com base no ID informado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Emprestimo encontrado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Emprestimo não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<EmprestimoResponseDTO> findById(@PathVariable Integer id) {
+        try {
+            EmprestimoResponseDTO emprestimo = service.findById(id);
+            return new ResponseEntity<>(emprestimo, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    /**
+     * Lista todos os Emprestimos cadastrados.
+     *
+     * @return Lista de JSONs dos Emprestimos e status da requisição.
+     */
+    @GetMapping
+    @Operation(summary = "Listar Todos os Emprestimos", description = "Método para listar todos os Emprestimos cadastrados.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Emprestimos listados com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<List<EmprestimoResponseDTO>> findAll() {
+        try {
+            List<EmprestimoResponseDTO> emprestimos = service.findAll();
+            return new ResponseEntity<>(emprestimos, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Deleta um Emprestimo pelo seu ID.
+     *
+     * @param id ID do Emprestimo a ser deletado.
+     * @return Status da requisição.
+     */
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar Emprestimo", description = "Método para deletar um Emprestimo com base no ID informado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Emprestimo deletado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Emprestimo não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+    })
+    public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+}

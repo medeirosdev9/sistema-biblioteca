@@ -16,7 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService {
 
-    private UsuarioRepository repository;
+    private final UsuarioRepository repository;
+
+    public UsuarioService(UsuarioRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Cria um novo usuário no sistema.
@@ -81,6 +85,9 @@ public class UsuarioService {
         return Usuario.builder()
                 .nome(usuario.nome())
                 .cpf(usuario.cpf())
+                .senha(usuario.senha())  // Adicione este campo
+                .cargo(usuario.cargo())  // Adicione este campo
                 .build();
     }
+
 }

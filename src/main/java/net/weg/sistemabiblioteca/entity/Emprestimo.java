@@ -18,12 +18,12 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
     @Column(nullable = false)
