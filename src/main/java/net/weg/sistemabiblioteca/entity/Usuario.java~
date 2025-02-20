@@ -29,6 +29,7 @@ public class Usuario {
     private String cargo;
 
     public UsuarioResponseDTO toDto() {
-        return new UsuarioResponseDTO(id, nome, cpf);
+        return new UsuarioResponseDTO(id, nome, cpf, cargo);
     }
+
 }

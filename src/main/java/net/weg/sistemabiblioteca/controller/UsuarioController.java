@@ -18,7 +18,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
-    private UsuarioService service;
+    private final UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
+
 
     @PostMapping
     @Tag(name = "Usuario", description = "Operações relacionadas ao Usuario")

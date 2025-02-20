@@ -1,91 +1,59 @@
 package net.weg.sistemabiblioteca.service;
 
-import lombok.RequiredArgsConstructor;
-import net.weg.sistemabiblioteca.controller.dto.request.UsuarioRequestDTO;
-import net.weg.sistemabiblioteca.controller.dto.response.UsuarioResponseDTO;
-import net.weg.sistemabiblioteca.entity.Usuario;
-import net.weg.sistemabiblioteca.repository.UsuarioRepository;
+import net.weg.sistemabiblioteca.controller.dto.request.LivroRequestDTO;
+import net.weg.sistemabiblioteca.controller.dto.response.LivroResponseDTO;
+import net.weg.sistemabiblioteca.entity.Livro;
+import net.weg.sistemabiblioteca.repository.LivroRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+/**
+ * Serviço responsável pelo gerenciamento de livros no sistema.
+ */
 @Service
-@RequiredArgsConstructor
-public class UsuarioService {
+public class LivroService {
 
-    private final UsuarioRepository repository;
+    private final LivroRepository repository;
+    private final AutorService autorService;
 
-    /**
-     * Cria um novo Usuário.
-     * @param usuarioRequestDTO Objeto com os dados do usuário.
-     * @return DTO do usuário criado.
-     */
-    public UsuarioResponseDTO create(UsuarioRequestDTO usuarioRequestDTO) {
-        Usuario usuario = repository.save(toEntity(usuarioRequestDTO));
-        return usuario.toDto();
+    public LivroService(LivroRepository repository, AutorService autorService) {
+        this.repository = repository;
+        this.autorService = autorService;
     }
 
-    /**
-     * Atualiza um Usuário existente.
-     * @param usuarioRequestDTO Objeto com os novos dados.
-     * @param id ID do usuário a ser atualizado.
-     * @return DTO do usuário atualizado.
-     */
-    public UsuarioResponseDTO update(UsuarioRequestDTO usuarioRequestDTO, Integer id) {
-        Usuario usuario = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
-        usuario.setNome(usuarioRequestDTO.nome());
-        usuario.setCpf(usuarioRequestDTO.cpf());
-        usuario.setSenha(usuarioRequestDTO.senha());
-        usuario.setCargo(usuarioRequestDTO.cargo());
-        return repository.save(usuario).toDto();
+    public LivroResponseDTO create(LivroRequestDTO livroRequestDTO) {
+        Livro livro = repository.save(toEntity(livroRequestDTO));
+        return livro.toDto();
     }
 
-    /**
-     * Deleta um Usuário pelo ID.
-     * @param id ID do usuário a ser deletado.
-     */
+    public Livro update(Livro livro, Integer id) {
+        livro.setId(id);
+        return repository.save(livro);
+    }
+
     public void delete(Integer id) {
-        if (!repository.existsById(id)) {
-            throw new NoSuchElementException("Usuário não encontrado");
-        }
         repository.deleteById(id);
     }
 
-    /**
-     * Busca um Usuário pelo ID.
-     * @param id ID do usuário a ser buscado.
-     * @return DTO do usuário encontrado.
-     */
-    public UsuarioResponseDTO findById(Integer id) {
-        return repository.findById(id)
-                .map(Usuario::toDto)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+    public LivroResponseDTO findById(Integer id) {
+        Livro livro = repository.findById(id).orElseThrow(NoSuchElementException::new);
+        return livro.toDto();
     }
 
-    /**
-     * Retorna a lista de todos os Usuários cadastrados.
-     * @return Lista de DTOs dos usuários.
-     */
-    public List<UsuarioResponseDTO> findAll() {
-        return repository.findAll().stream()
-                .map(Usuario::toDto)
-                .collect(Collectors.toList());
+    public List<LivroResponseDTO> findAll() {
+        return repository.findAll().stream().map(Livro::toDto).collect(Collectors.toList());
     }
 
-    /**
-     * Converte um DTO de requisição para entidade.
-     * @param usuario DTO de requisição.
-     * @return Entidade Usuário.
-     */
-    private Usuario toEntity(UsuarioRequestDTO usuario) {
-        return Usuario.builder()
-                .nome(usuario.nome())
-                .cpf(usuario.cpf())
-                .senha(usuario.senha())
-                .cargo(usuario.cargo())
+    public Livro toEntity(LivroRequestDTO livro) {
+        return Livro.builder()
+                .autor(autorService.buscarAutor(livro.autor_id()))
+                .titulo(livro.titulo())
+                .sinopse(livro.sinopse())
+                .genero(livro.genero())
+                .quantidade(livro.quantidade())
                 .build();
     }
 }

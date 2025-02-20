@@ -16,7 +16,11 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AutorService {
-    private AutorRepository repository;
+    private final AutorRepository repository;
+
+    public AutorService(AutorRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Cria um novo autor.

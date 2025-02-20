@@ -2,8 +2,13 @@ package net.weg.sistemabiblioteca.service;
 
 import net.weg.sistemabiblioteca.controller.dto.request.EmprestimoRequestDTO;
 import net.weg.sistemabiblioteca.controller.dto.response.EmprestimoResponseDTO;
+import net.weg.sistemabiblioteca.controller.dto.response.LivroResponseDTO;
+import net.weg.sistemabiblioteca.controller.dto.response.UsuarioResponseDTO;
 import net.weg.sistemabiblioteca.entity.Emprestimo;
+import net.weg.sistemabiblioteca.entity.Livro;
+import net.weg.sistemabiblioteca.entity.Usuario;
 import net.weg.sistemabiblioteca.repository.EmprestimoRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -12,67 +17,59 @@ import java.util.stream.Collectors;
 /**
  * Serviço responsável pelo gerenciamento de empréstimos.
  */
+@Service
 public class EmprestimoService {
 
-    private EmprestimoRepository repository;
+    private final EmprestimoRepository repository;
+    private final UsuarioService usuarioService;
+    private final LivroService livroService;
 
-    /**
-     * Cria um novo empréstimo.
-     * @param emprestimoRequestDTO Dados do empréstimo a ser criado.
-     * @return Empréstimo criado convertido em DTO.
-     */
+    public EmprestimoService(EmprestimoRepository repository, UsuarioService usuarioService, LivroService livroService) {
+        this.repository = repository;
+        this.usuarioService = usuarioService;
+        this.livroService = livroService;
+    }
+
     public EmprestimoResponseDTO create(EmprestimoRequestDTO emprestimoRequestDTO) {
         Emprestimo emprestimo = repository.save(toEntity(emprestimoRequestDTO));
         return emprestimo.toDto();
     }
 
-    /**
-     * Atualiza um empréstimo existente.
-     * @param emprestimo Empréstimo atualizado.
-     * @param id Identificador do empréstimo.
-     * @return Empréstimo atualizado.
-     */
-    public Emprestimo update(Emprestimo emprestimo, Integer id) {
-        emprestimo.setId(id);
-        return repository.save(emprestimo);
+    public EmprestimoResponseDTO update(EmprestimoRequestDTO emprestimo, Integer id) {
+        Emprestimo emprestimoNovo = toEntity(emprestimo);
+        emprestimoNovo.setId(id);
+        repository.save(emprestimoNovo);
+        return emprestimoNovo.toDto();
     }
 
-    /**
-     * Deleta um empréstimo pelo ID.
-     * @param id Identificador do empréstimo a ser deletado.
-     */
     public void delete(Integer id) {
         repository.deleteById(id);
     }
 
-    /**
-     * Busca um empréstimo pelo ID.
-     * @param id Identificador do empréstimo.
-     * @return Empréstimo encontrado convertido em DTO.
-     * @throws NoSuchElementException Se o empréstimo não for encontrado.
-     */
     public EmprestimoResponseDTO findById(Integer id) {
         Emprestimo emprestimo = repository.findById(id).orElseThrow(NoSuchElementException::new);
         return emprestimo.toDto();
     }
 
-    /**
-     * Retorna a lista de todos os empréstimos.
-     * @return Lista de empréstimos convertidos em DTO.
-     */
     public List<EmprestimoResponseDTO> findAll() {
         return repository.findAll().stream().map(Emprestimo::toDto).collect(Collectors.toList());
     }
 
     /**
-     * Converte um DTO de empréstimo para entidade.
-     * @param emprestimo Dados do empréstimo.
-     * @return Entidade de empréstimo.
+     * Converte um DTO de empréstimo para entidade, buscando as entidades `Usuario` e `Livro`.
      */
     private Emprestimo toEntity(EmprestimoRequestDTO emprestimo) {
+        Usuario usuario = usuarioService.findEntityById(emprestimo.usuarioId()); // Buscar a entidade Usuario
+        Livro livro = livroService.findEntityById(emprestimo.livroId()); // Buscar a entidade Livro
+
         return Emprestimo.builder()
-                .usuario(emprestimo.usuario())
-                .livro(emprestimo.livro())
+                .usuario(usuario)
+                .livro(livro)
+                .dataEmprestimo(emprestimo.dataEmprestimo())
+                .dataDevolucao(emprestimo.dataDevolucao())
                 .build();
     }
+
+
 }
+

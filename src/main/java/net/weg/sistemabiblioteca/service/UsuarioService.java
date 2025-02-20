@@ -66,6 +66,7 @@ public class UsuarioService {
         return usuario.toDto();
     }
 
+
     /**
      * Retorna uma lista de todos os usuários cadastrados no sistema.
      *
@@ -74,6 +75,11 @@ public class UsuarioService {
     public List<UsuarioResponseDTO> findAll() {
         return repository.findAll().stream().map(Usuario::toDto).collect(Collectors.toList());
     }
+
+    public Usuario findEntityById(Integer id) {
+        return repository.findById(id).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado!"));
+    }
+
 
     /**
      * Converte um DTO de requisição de usuário para uma entidade {@link Usuario}.
@@ -85,8 +91,7 @@ public class UsuarioService {
         return Usuario.builder()
                 .nome(usuario.nome())
                 .cpf(usuario.cpf())
-                .senha(usuario.senha())  // Adicione este campo
-                .cargo(usuario.cargo())  // Adicione este campo
+                .cargo(usuario.cargo())
                 .build();
     }
 

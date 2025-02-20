@@ -20,16 +20,13 @@ public class Usuario {
     private String nome;
 
     @Column(nullable = false)
-    private String senha;
-
-    @Column(nullable = false)
     private String cpf;
 
     @Column(nullable = false)
     private String cargo;
 
     public UsuarioResponseDTO toDto() {
-        return new UsuarioResponseDTO(id, nome, cpf, cargo);
+        return new UsuarioResponseDTO(id, nome, cpf);
     }
 
 }
