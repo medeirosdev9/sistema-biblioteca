@@ -115,8 +115,12 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
     })
     public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
-        service.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            service.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     }
 }
 

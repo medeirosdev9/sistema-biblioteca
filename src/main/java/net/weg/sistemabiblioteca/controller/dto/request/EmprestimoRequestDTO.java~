@@ -1,17 +1,17 @@
 package net.weg.sistemabiblioteca.controller.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import net.weg.sistemabiblioteca.entity.Livro;
-import net.weg.sistemabiblioteca.entity.Usuario;
-
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+/**
+ * DTO para requisições relacionadas à entidade Emprestimo.
+ */
 public record EmprestimoRequestDTO(
 
-        @NotBlank Usuario usuario,
-        @NotBlank Livro livro,
+        @NotNull Integer usuarioId,
+        @NotNull Integer livroId,
 
-        @NotBlank LocalDate dataEmprestimo,
-        @NotBlank LocalDate dataDevolucao
-        ) {
+        @NotNull LocalDate dataEmprestimo,
+        @NotNull LocalDate dataDevolucao
+) {
 }

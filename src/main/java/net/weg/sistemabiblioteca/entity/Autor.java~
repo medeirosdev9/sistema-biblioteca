@@ -9,9 +9,6 @@ import net.weg.sistemabiblioteca.controller.dto.response.AutorResponseDTO;
 
 import java.util.List;
 
-/**
- * Entidade que representa um Autor no sistema.
- */
 @Builder
 @Entity
 @Data
@@ -20,30 +17,16 @@ import java.util.List;
 @Table(name = "autores")
 public class Autor {
 
-    /**
-     * Identificador único do Autor.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    /**
-     * Nome do Autor.
-     */
     @Column(nullable = false)
     private String nome;
 
-    /**
-     * Lista de livros associados ao Autor.
-     */
     @OneToMany(cascade = CascadeType.PERSIST)
     public List<Livro> livros;
 
-    /**
-     * Converte a entidade Autor para um DTO de resposta.
-     *
-     * @return AutorResponseDTO contendo os dados do Autor.
-     */
     public AutorResponseDTO toDto() {
         return new AutorResponseDTO(this.id, this.nome);
     }

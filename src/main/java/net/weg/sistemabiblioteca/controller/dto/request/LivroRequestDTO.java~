@@ -3,11 +3,10 @@ package net.weg.sistemabiblioteca.controller.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class LivroRequestDTO {
-    private String titulo;
-    private int quantidade;
-    private String sinopse;
-    private String genero;
-    private Integer autorId; 
-}
-
+public record LivroRequestDTO(
+        @NotBlank String titulo,
+        @NotNull Integer quantidade,
+        @NotBlank String sinopse,
+        @NotBlank String genero,
+        @NotNull Integer autor_id
+) {}

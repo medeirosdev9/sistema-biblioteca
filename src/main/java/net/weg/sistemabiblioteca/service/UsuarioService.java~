@@ -16,16 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService {
 
-    /**
-     * Repositório de usuários.
-     */
     private final UsuarioRepository repository;
 
-    /**
-     * Construtor da classe.
-     *
-     * @param repository Repositório de usuários.
-     */
     public UsuarioService(UsuarioRepository repository) {
         this.repository = repository;
     }

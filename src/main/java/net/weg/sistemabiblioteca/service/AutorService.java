@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
 public class AutorService {
     private final AutorRepository repository;
 
+    /**
+     * Construtor da classe AutorService.
+     * @param repository Repositório de autores.
+     */
     public AutorService(AutorRepository repository) {
         this.repository = repository;
     }

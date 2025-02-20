@@ -18,7 +18,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
-    private UsuarioService service;
+    private final UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
+
 
     @PostMapping
     @Tag(name = "Usuario", description = "Operações relacionadas ao Usuario")
@@ -110,8 +115,12 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
     })
     public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
+        try {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     }
 }
 
